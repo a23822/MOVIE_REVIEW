@@ -28,3 +28,4 @@
 ### .gitignore
 
 ignore 관련해 정리했습니다.
+cf) gitignore.io 이용했습니다
