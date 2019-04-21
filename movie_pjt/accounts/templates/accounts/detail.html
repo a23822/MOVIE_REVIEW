@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% load gravatar %}
+
+{% block body %}
+
+<div class="row">
+    <div class="my-4 mx-auto">
+        <img class="rounded-circle" src="{{profile.email|gravatar_url:200}}" alt="plz_wait"/>
+    </div>
+    <div class="container">
+        <div class="mx-auto text-center">
+          <h1>{{profile.username}}</h1>
+          <p>{{profile.email}}</p>
+          <ul class="list-inline">
+            <li class="list-inline-item badge badge-info text-wrap">이름</li>
+            <li class="list-inline-item">{{profile.first_name}}</li>
+            <li class="list-inline-item badge badge-info text-wrap">성</li>
+            <li class="list-inline-item">{{profile.last_name}}</li>
+            {% if user != profile %}
+                {% if user in profile.user_followers_user.all %}
+                    <li><a class="btn btn-primary my-3" href="{{profile.pk}}/follow/{{user.pk}}">언팔로우</a></li>
+                {% else %}
+                    <li><a class="btn btn-info my-3" href="{{profile.pk}}/follow/{{user.pk}}">팔로우</a></li>
+                {% endif %}
+            {% endif %}
+          </ul>
+          <hr/>
+        </div>
+        <div class="row my-2">
+            <p class="mr-4">{{profile.user_followers_user.count}} 명이 팔로우했다우</p>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#followers">팔로워 보기</button>
+        </div>
+        <div class="row my-2">
+            <p class="mr-4">이 사람은 {{profile.user_followings_user.count}} 명을 팔로우했다우</p>
+            <button type="button" class="btn btn-info" data-toggle="modal" data-target="#followings">팔로잉 보기</button>
+        </div>
+    </div>
+</div>
+<div class="mx-4 my-2">
+  {% if user == profile %}
+  <hr/>
+  {% for r in refs %}
+    <div class="row mx-auto my-2">
+      <a class="badge badge-primary text-wrap" href="{% url 'accounts:detail' r.user_id.pk %}">{{r.user_id.username}} 님의 최고 평점 영화</a>
+    </div>
+    <div class="row mx-auto my-2">
+      <img style="height:100px" src="{{r.movie_id.poster_url}}" alt="plz wait"/>
+        <div class="container">
+          <h4><strong>{{r.movie_id.title}}</strong></h4>
+          <div class="row">
+            <div class="container">
+              <label class="badge badge-info text-wrap">평점</label>
+              <p>{{r.value}}</p>
+            </div>
+            <div class="container">
+              <label class="badge badge-info text-wrap">리뷰</label>
+              <p>{{r.content}}</p>
+            </div>
+          </div>
+        </div>
+    </div>
+  {% endfor %}
+  {% endif %}
+</div>
+
+<!--MODAL-->
+<div class="modal fade" id="followers" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="followers_title">Followers</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for follower in profile.user_followers_user.all %}
+            <a class="badge badge-primary text-wrap" href="{% url 'accounts:detail' follower.pk %}">{{follower.username}}</a>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="followings" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="followings_title">Followings</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {% for following in profile.user_followings_user.all %}
+            <a class="badge badge-primary text-wrap" href="{% url 'accounts:detail' following.pk %}">{{following.username}}</a>
+        {% endfor %}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

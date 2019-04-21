@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block body %}
+{% for u in users %}
+<div class="col-3 mx-auto">
+    <a class ="badge badge-primary text-wrap" href="{% url 'accounts:detail' u.pk %}">{{u.username}}</a>
+</div>
+{% endfor %}
+
+{% endblock %}
